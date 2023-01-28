@@ -99,6 +99,7 @@ jobs:
       - run:
           name: Scan frontend
           command: |
+            cd frontend
             npm i
             npm audit --audit-level=critical
 
@@ -110,6 +111,7 @@ jobs:
       - run:
           name: Scan backend
           command: |
+            cd backend
             npm i
             npm audit --audit-level=critical
 
