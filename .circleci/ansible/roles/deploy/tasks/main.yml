@@ -6,7 +6,7 @@
 
 - name: Copy backend files
   copy:
-    src: *
+    src: /
     dest: ~/web/dist
 
 - name: Start Node project
