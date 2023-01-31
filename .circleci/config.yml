@@ -151,8 +151,8 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-frontend_env
-      - destroy-backend_env
+      - destroy_frontend_env
+      - destroy_backend_env
 
   configure-infrastructure:
     docker:
@@ -181,8 +181,8 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-      - destroy-frontend_env
-      - destroy-backend_env
+      - destroy_frontend_env
+      - destroy_backend_env
 
   run-migrations:
     docker:
@@ -213,8 +213,8 @@ jobs:
               curl https://kvdb.io/33mKxWBEF22qmFmoGoyyU9/migrations -d '1'
             fi
       - revert-migrations
-      - destroy-frontend_env
-      - destroy-backend_env
+      - destroy_frontend_env
+      - destroy_backend_env
 
   deploy-frontend:
     docker:
@@ -247,8 +247,8 @@ jobs:
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations
-      - destroy-frontend_env
-      - destroy-backend_env
+      - destroy_frontend_env
+      - destroy_backend_env
       
   deploy-backend:
     docker:
@@ -290,8 +290,8 @@ jobs:
            cat inventory.txt
            ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations
-      - destroy-frontend_env
-      - destroy-backend_env
+      - destroy_frontend_env
+      - destroy_backend_env
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
