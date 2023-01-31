@@ -180,8 +180,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apt install nodejs
-            apt install npm
+            sudo apt install nodejs -y
+            sudo apt install npm -y
+            sudo apt install awscli -y
       - run:
           name: Run migrations
           command: |
