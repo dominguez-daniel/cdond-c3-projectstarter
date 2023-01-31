@@ -1,0 +1,14 @@
+---
+- name: Create directory
+  file:
+    path: ~/web
+    state: directory
+
+- name: Copy backend
+  copy:
+    src: main.js
+    dest: ~/web/main.js
+
+- name: Start Node project
+  shell: |
+    pm2 start ~/web/main.js -f

@@ -235,33 +235,38 @@ jobs:
       - revert-migrations
       - destroy-environment
       
-  # deploy-backend:
-  #   docker:
-  #     - image: python:3.11-alpine
-  #   steps:
-  #     - checkout
-  #     - add_ssh_keys:
-  #         fingerprints: ["1d:f4:08:6a:79:e8:e4:88:6e:e4:f1:a8:ad:00:01:b4"]
-  #     - attach_workspace:
-  #         at: ~/
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           # your code here
-  #     - run:
-  #         name: Deploy backend
-  #         command: |
-  #          cd backend
-  #          npm i
-  #          npm run build
-  #          tar -C backend -czvf artifact.tar.gz
-  #          cd .circleci/ansible
-  #          echo "Contents of the inventory.txt file -----"
-  #          cat inventory.txt
-  #          ansible-playbook -i inventory.txt deploy-backend.yml
-  #     - destroy-environment:
-  #         stack_name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" 
-
+  deploy-backend:
+    docker:
+      - image: python:3.11-alpine
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["1d:f4:08:6a:79:e8:e4:88:6e:e4:f1:a8:ad:00:01:b4"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update nodejs
+            apk add --update npm
+            apk add --update ansible
+      - run:
+          name: Prep backend
+          command: | 
+            cd backend
+            npm i
+            npm run build
+            mv dist/* ~/project/.circleci/ansible/roles/deploy/files
+            ls ~/project/.circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+           cd .circleci/ansible
+           echo "Contents of the inventory.txt file -----"
+           cat inventory.txt
+           ansible-playbook -i inventory.txt deploy-backend.yml
+      - revert-migrations
+      - destroy-environment
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
@@ -344,8 +349,8 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
