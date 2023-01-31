@@ -10,8 +10,8 @@ commands:
       - run:
           name: Destroy environments
           when: on_fail
-          command: |
-            aws cloudformation destroy-stack --stack-name <<parameters.stack_name>>
+          command: | 
+            aws cloudformation destroy-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.    
@@ -171,7 +171,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/aws:2022.11
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -179,9 +179,11 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt update
-            sudo apt install nodejs -y        
-            sudo apt install npm -y
+            sudo apt install unzip curl
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
+            aws --version
       - run:
           name: Run migrations
           command: |
@@ -196,8 +198,6 @@ jobs:
               curl https://kvdb.io/33mKxWBEF22qmFmoGoyyU9/migrations_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
       - revert-migrations
-      - destroy-environment:
-          stack_name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
 
   deploy-frontend:
     docker:
