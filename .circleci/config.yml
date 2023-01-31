@@ -278,7 +278,7 @@ jobs:
             cd backend
             npm i --legacy-peer-deps
             npm run build
-            mv dist/* ~/project/.circleci/ansible/roles/deploy/files
+            mv dist ~/project/.circleci/ansible/roles/deploy/files
             ls ~/project/.circleci/ansible/roles/deploy/files
       - run:
           name: Deploy backend
@@ -289,7 +289,7 @@ jobs:
            ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations
       - destroy_backend_env
-      - destroy_frontend_env
+      # - destroy_frontend_env
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
