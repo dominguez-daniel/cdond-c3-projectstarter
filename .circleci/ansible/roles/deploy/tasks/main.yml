@@ -6,10 +6,10 @@
 
 - name: Copy backend files
   copy:
-    src: /
-    dest: ~/web/dist
+    src: /*
+    dest: ~/web/
 
 - name: Start Node project
   shell: |
-    pm2 start ~/web/dist/main.js -f
+    pm2 start ~/web/main.js -f
     pm2 status
