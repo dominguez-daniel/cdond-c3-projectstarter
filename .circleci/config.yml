@@ -119,6 +119,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install tar and gzip
+          command: |
+            yum -y install tar gzip
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -160,6 +164,10 @@ jobs:
             apk add --update npm
             apk add --update ansible
       - run:
+          name: Print inventory list
+          command: |
+            cat .circleci/ansible/inventory.txt
+      - run:
           name: Configure server
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
@@ -170,8 +178,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      # - restore_cache:
-      #     keys: [backend-build]
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install aws cli
           command: |
