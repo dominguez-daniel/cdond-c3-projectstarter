@@ -20,8 +20,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            $SUCCESS = 'curl https://kvdb.io/33mKxWBEF22qmFmoGoyyU9/migrations-${CIRCLE_WORKFLOW_ID:0:7}'
+            SUCCESS=$(curl --insecure https://kvdb.io/33mKxWBEF22qmFmoGoyyU9/migrations-${CIRCLE_WORKFLOW_ID:0:7})
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -172,7 +171,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/aws:2022.11
     steps:
       - checkout
       - restore_cache:
@@ -180,9 +179,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt install awscli -y
+            sudo apt update
+            sudo apt install nodejs -y        
             sudo apt install npm -y
-            sudo apt install nodejs -y
       - run:
           name: Run migrations
           command: |
