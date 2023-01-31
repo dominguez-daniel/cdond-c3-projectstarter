@@ -6,8 +6,8 @@
 
 - name: Copy backend files
   copy:
-    src: ~/project/.circleci/ansible/roles/deploy/files/
-    dest: ~/web/
+    src: artifact.tar.gz
+    dest: ~/web/artifact.tar.gz
 
 # - name: Start Node project
 #   shell: |
