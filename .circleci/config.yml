@@ -14,21 +14,19 @@ commands:
             aws cloudformation destroy-stack --stack-name <<parameters.stack_name>>
 
   revert-migrations:
-    description: Revert the last migration if successfully run in the current workflow.
-    # parameters:
-      # Add parameter here     
+    description: Revert the last migration if successfully run in the current workflow.    
     steps:
       - run:
           name: Revert migrations
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = curl https://kvdb.io/33mKxWBEF22qmFmoGoyyU9/migrations-${CIRCLE_WORKFLOW_ID:0:7}
+            $SUCCESS = 'curl https://kvdb.io/33mKxWBEF22qmFmoGoyyU9/migrations-${CIRCLE_WORKFLOW_ID:0:7}''
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
+              cd ~/project/backend
+              npm install
+              npm run migration:revert
             fi
             
 jobs:
@@ -162,6 +160,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            apk add --update nodejs
+            apk add --update npm
             apk add --update ansible
       - run:
           name: Configure server
@@ -177,6 +177,11 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
+      - run:
+          name: Install dependencies
+          command: |
+            apt install nodejs
+            apt install npm
       - run:
           name: Run migrations
           command: |
