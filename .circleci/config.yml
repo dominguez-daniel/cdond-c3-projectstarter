@@ -259,7 +259,7 @@ jobs:
             apk add aws-cli
       - run:
           name: Build backend
-          commnd: |
+          command: |
             cd backend
             npm i
             npm run build
