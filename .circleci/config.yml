@@ -1,24 +1,16 @@
 version: 2.1
 
 commands:  
-  destroy_frontend_env:
-    description: Destroy front-end cloudformation stacks given a workflow ID. 
+  destroy-environment:
+    description: Destroy backend-end and front-end cloudformation stacks given a workflow ID.
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy frontend and backend environments
           when: on_fail
-          command: | 
+          command: |
             aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-
-  destroy_backend_env:
-    description: Destroy back-end cloudformation stacks given a workflow ID. 
-    steps:
-      - run:
-          name: Destroy environments
-          when: on_fail
-          command: | 
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.    
@@ -151,8 +143,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy_backend_env
-      - destroy_frontend_env
+      - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -181,8 +172,7 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-      - destroy_backend_env
-      - destroy_frontend_env
+      - destroy-environment
 
   run-migrations:
     docker:
@@ -213,8 +203,7 @@ jobs:
               curl https://kvdb.io/33mKxWBEF22qmFmoGoyyU9/migrations -d '1'
             fi
       - revert-migrations
-      - destroy_backend_env
-      - destroy_frontend_env
+      - destroy-environment
 
   deploy-frontend:
     docker:
@@ -247,8 +236,7 @@ jobs:
             npm run build
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - revert-migrations
-      - destroy_backend_env
-      - destroy_frontend_env
+      - destroy-environment
       
   deploy-backend:
     docker:
@@ -262,30 +250,34 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Install aws cli
-          command: |
-            apk add aws-cli
-      - run:
           name: Install dependencies
           command: |
-            apk --no-cache add curl
+            apk --no-cache add tar gzip curl
             apk add --update nodejs
             apk add --update npm
             apk add --update ansible
+            apk add aws-cli
+      - run:
+          name: Build backend
+          commnd: |
+            cd backend
+            npm i
+            npm run build
+      - run:
+          name: Create backend artifact
+          command: | 
+            tar czvf backend-artifact.tar.gz backend
       - run:
           name: Deploy backend
           command: | 
-            cd backend
-            npm i --legacy-peer-deps
-            npm run build
-            cd ..
-            tar -C backend -czvf artifact.tar.gz .
-            echo "Contents of the inventory.txt file -----"
+            cd ~/project/.circleci/ansible
+            echo "Contents of the inventory.txt file ----"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       - revert-migrations
-      - destroy_backend_env
-      # - destroy_frontend_env
+      - destroy-environment
+
+
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
