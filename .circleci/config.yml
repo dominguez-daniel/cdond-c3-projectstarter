@@ -261,7 +261,7 @@ jobs:
           name: Build backend
           command: |
             cd backend
-            npm i
+            npm i --legacy-peer-deps
             npm run build
       - run:
           name: Create backend artifact
