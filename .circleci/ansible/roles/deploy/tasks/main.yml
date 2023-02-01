@@ -1,13 +1,19 @@
 ---
-- name: Create directory
-  file:
-    path: ~/web
-    state: directory
+# - name: Create directory
+#   file:
+#     path: ~/web
+#     state: directory
 
-- name: Copy backend files
-  copy:
-    src: backend
-    dest: ~/web/backend
+- name: Display dir
+  ansible.builtin.debug:
+    var: playbook_dir
+
+# - name: Copy backend files
+#   become: true
+#   unarchive:
+#     src: ~
+#     dest: ~/web
+#     mode: 0755
 
 # - name: Start Node project
 #   shell: |
