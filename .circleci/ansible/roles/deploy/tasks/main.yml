@@ -6,8 +6,8 @@
 
 - name: Copy backend files
   copy:
-    src: artifact.tar.gz
-    dest: ~/web/artifact.tar.gz
+    src: backend
+    dest: ~/web/backend
 
 # - name: Start Node project
 #   shell: |
