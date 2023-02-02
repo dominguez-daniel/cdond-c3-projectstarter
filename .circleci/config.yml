@@ -295,6 +295,10 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
+      - run:
+          name: Wait for server
+          command: |
+            sleep 30
       - checkout
       - attach_workspace:
           at: ~/
