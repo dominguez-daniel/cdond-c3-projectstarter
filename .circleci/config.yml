@@ -327,11 +327,8 @@ jobs:
     docker:
        - image: cimg/aws:2022.11
     steps:
+      - run: sleep 600
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            # your code here
       - run:
           name: Update cloudfront distribution
           command: |
@@ -397,7 +394,7 @@ workflows:
           requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
+      - cloudfront-update:
+          requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
