@@ -120,6 +120,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Print workflow id
+          command: |
+            cat WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -327,7 +331,6 @@ jobs:
     docker:
        - image: cimg/aws:2022.11
     steps:
-      - run: sleep 600
       - checkout
       - run:
           name: Update cloudfront distribution
