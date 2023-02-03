@@ -357,7 +357,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/OldWorkFlowID.txt
+            - ~/project/.circleci/ansible/OldWorkFlowID.txt
       - revert-migrations
       - destroy-environment
 
