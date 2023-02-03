@@ -344,8 +344,8 @@ jobs:
           name: Update cloudfront distribution
           command: |
             export OldWorkFlowID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
-            echo $OldWorkFlowID >> ~/project/OldWorkFlowID.txt
-            cat ~/project/OldWorkFlowID.txt
+            echo $OldWorkFlowID >> ~/OldWorkFlowID.txt
+            cat ~/OldWorkFlowID.txt
 
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
@@ -355,8 +355,8 @@ jobs:
             echo OldWorkflowId: "${OldWorkFlowID}"
             echo Current WorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
       - persist_to_workspace:
-          root: ~/project
-          path: OldWorkFlowID.txt
+          root: ~/
+          path: ~/OldWorkFlowID.txt
       - revert-migrations
       - destroy-environment
 
@@ -370,7 +370,7 @@ jobs:
         - run:
             name: Get old workflow id
             command: |
-              cat ~/project/OldWorkFlowID.txt
+              cat ~/OldWorkFlowID.txt
         - run: 
             name: Print old workflow id
             command: |
