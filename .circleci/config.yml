@@ -372,7 +372,12 @@ jobs:
             name: Remove old stacks and files
             command: |
               export OldWorkflowID=$(cat ~/project/OldWorkFlowID.txt)
+              export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+              echo Stack names: "${STACKS[@]}" 
+
               if [[ -z "${OldWorkflowID}" && "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+              # if [[ "${OldWorkflowID}" =~ "${STACKS[@]}"  ]]
               then
                 echo "---Infrastructure cleanup start---"
                 aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
@@ -382,7 +387,7 @@ jobs:
               else
                 echo "---No infrastructure to cleanup---"
               fi
-              
+
 workflows:
   default:
     jobs:
