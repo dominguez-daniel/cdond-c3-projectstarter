@@ -309,7 +309,12 @@ jobs:
           name: Install dependencies
           command: |
             apk add aws-cli
-            apk --no-cache add curl          
+            apk --no-cache add curl  
+      - run:
+          name: Print inventory list
+          command: |
+            echo ---inventory---
+            cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: Backend smoke test.
           command: |
