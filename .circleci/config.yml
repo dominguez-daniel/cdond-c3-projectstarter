@@ -12,10 +12,6 @@ commands:
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
-            # aws s3 rm s3://udapeople-6f675c0 --recursive
-            # aws cloudformation delete-stack --stack-name "udapeople-backend-6f675c0"
-            # aws cloudformation delete-stack --stack-name "udapeople-frontend-6f675c0"
-
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.    
     steps:
